@@ -1,5 +1,5 @@
 # 使用Node.js 20.x版本作为基础镜像
-FROM node:20
+FROM node:18
 
 # 设置工作目录
 WORKDIR /app
@@ -8,10 +8,10 @@ WORKDIR /app
 COPY package.json ./
 
 # 安装项目依赖项
-RUN npm install
+RUN yarn
 
 # 复制项目的其他文件
-COPY . .
+COPY . /app
 
 # 运行项目构建（可选，如果需要构建步骤）
 RUN npm run build
