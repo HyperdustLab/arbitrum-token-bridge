@@ -5,7 +5,7 @@ FROM node:20
 WORKDIR /app
 
 # 复制package.json和package-lock.json到工作目录
-COPY package.json package-lock.json ./
+COPY package.json ./
 
 # 安装项目依赖项
 RUN npm install
