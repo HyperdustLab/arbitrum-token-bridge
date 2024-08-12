@@ -652,8 +652,8 @@ export const orbitTestnets: { [key in number]: OrbitChainConfig } = {
     rpcUrl: 'https://rpc.hyperagi.network',
     isCustom: true,
     isTestnet: false,
-    name: 'HyperAGI Anytrust L3 Testnet',
-    slug: 'HyperAGI Anytrust L3 Testnet',
+    name: 'Tagtal Orbit Testnet',
+    slug: 'Tagtal Orbit Testnet',
     parentChainId: 42161,
     retryableLifetimeSeconds: 604800,
     tokenBridge: {
@@ -673,20 +673,20 @@ export const orbitTestnets: { [key in number]: OrbitChainConfig } = {
       childWethGateway: '0x0000000000000000000000000000000000000000'
     },
     bridgeUiConfig: {
-      color: '#889B6F',
+      color: '#3ABE7B',
       network: {
-        name: 'HyperAGI L3 Chain_Testnet_0808',
-        logo: '/images/AtlasLogo.png',
+        name: 'Tagtal Orbit Testnet',
+        logo: '/images/HyperAGILogo.svg',
         description:
-          'Aarc is the first modular layer for unified borderless dapps.'
+            'Tagtal Orbit Testnet.'
       },
       nativeTokenData: {
-        name: 'Test Token',
-        symbol: 'Test0807',
+        name: 'TAGTAL',
+        symbol: 'TAGTAL',
         decimals: 18,
-        logoUrl: '/images/AtlasLogo.png'
+        logoUrl: '/images/HyperAGILogo.svg'
       }
-    }
+    },
   }
 }
 

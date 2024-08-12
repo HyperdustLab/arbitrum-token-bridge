@@ -7,6 +7,9 @@ WORKDIR /app
 # 复制项目的其他文件
 COPY . .
 
+
+RUN cd packages/arb-token-bridge-ui/
+
 # 安装项目依赖项
 RUN yarn
 
