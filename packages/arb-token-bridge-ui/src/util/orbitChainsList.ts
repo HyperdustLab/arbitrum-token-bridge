@@ -651,7 +651,7 @@ export const orbitTestnets: { [key in number]: OrbitChainConfig } = {
     explorerUrl: 'https://block.hyperagi.network',
     rpcUrl: 'https://rpc.hyperagi.network',
     isCustom: true,
-    isTestnet: true,
+    isTestnet: false,
     name: 'HyperAGI Anytrust L3 Testnet',
     slug: 'HyperAGI Anytrust L3 Testnet',
     parentChainId: 42161,
