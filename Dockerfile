@@ -1,23 +1,24 @@
-# 使用Node.js 20.x版本作为基础镜像
+# Use Node.js 18.x as the base image
 FROM node:18
 
-# 设置工作目录
+# Set the working directory
 WORKDIR /app
 
-# 复制项目的其他文件
+# Copy the rest of the project files
 COPY . .
-
 
 RUN cd packages/arb-token-bridge-ui/
 
-# 安装项目依赖项
+# Install project dependencies
 RUN yarn
 
-# 运行项目构建（可选，如果需要构建步骤）
+RUN npm run lint:fix
+
+# Build the project (optional, if a build step is needed)
 RUN yarn build
 
-# 暴露应用程序端口（根据您的应用程序设置端口）
+# Expose the application port (set the port according to your application)
 EXPOSE 3000
 
-# 启动应用程序
+# Start the application
 CMD ["yarn", "start"]
