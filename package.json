@@ -31,5 +31,8 @@
   ],
   "devDependencies": {
     "audit-ci": "^6.3.0"
+  },
+  "dependencies": {
+    "arb-token-bridge-ui-mono": "file:"
   }
 }
