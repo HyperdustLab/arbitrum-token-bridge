@@ -157,7 +157,7 @@ function NetworksPanel({ chainIds, selectedChainId, onNetworkRowClick, close }: 
       })
     }
 
-    const coreNetworks = []
+    const coreNetworks: ChainId[] = []
     const orbitNetworks = chainIds.filter((chainId) => isNetwork(chainId).isOrbitChain)
 
     return {

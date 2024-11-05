@@ -14,7 +14,10 @@ export function Header({ children }: { children?: React.ReactNode }) {
 
   const destinationChainStyle = useDestinationChainStyle()
 
-  destinationChainStyle.marginLeft = '15rem'
+  const headerStyle = {
+    ...destinationChainStyle,
+    marginLeft: '15rem',
+  }
 
   return (
     <header
@@ -23,7 +26,7 @@ export function Header({ children }: { children?: React.ReactNode }) {
         isTestnet ? 'sm:border-b sm:border-white sm:bg-white/20' : 'sm:bg-transparent',
         destinationChainStyle.borderColor ? 'sm:border-b' : ''
       )}
-      style={destinationChainStyle}
+      style={headerStyle}
     >
       <div className="flex w-full items-center justify-end gap-2 text-white">
         <Image className="mr-auto h-6 w-6 sm:hidden" src={ArbitrumLogoSmall} alt="Arbitrum" />
