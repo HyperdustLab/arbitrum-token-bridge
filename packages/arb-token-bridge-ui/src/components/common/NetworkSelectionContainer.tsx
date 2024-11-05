@@ -1,17 +1,7 @@
-import {
-  CSSProperties,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react'
+import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Chain } from 'wagmi'
 import { useDebounce } from '@uidotdev/usehooks'
-import {
-  ChevronDownIcon,
-  ShieldExclamationIcon
-} from '@heroicons/react/24/outline'
+import { ChevronDownIcon, ShieldExclamationIcon } from '@heroicons/react/24/outline'
 import { twMerge } from 'tailwind-merge'
 import { AutoSizer, List, ListRowProps } from 'react-virtualized'
 
@@ -36,7 +26,7 @@ type NetworkType = 'core' | 'orbit'
 
 enum ChainGroupName {
   core = 'CORE CHAINS',
-  orbit = 'ORBIT CHAINS'
+  orbit = 'ORBIT CHAINS',
 }
 
 type ChainGroupInfo = {
@@ -46,7 +36,7 @@ type ChainGroupInfo = {
 
 const chainGroupInfo: { [key in NetworkType]: ChainGroupInfo } = {
   core: {
-    name: ChainGroupName.core
+    name: ChainGroupName.core,
   },
   orbit: {
     name: ChainGroupName.orbit,
@@ -54,74 +44,43 @@ const chainGroupInfo: { [key in NetworkType]: ChainGroupInfo } = {
       <p className="mt-2 flex gap-1 whitespace-normal rounded bg-orange-dark px-2 py-1 text-xs text-orange">
         <ShieldExclamationIcon className="h-4 w-4 shrink-0" />
         <span>
-          Independent projects using Arbitrum technology. Orbit chains have
-          varying degrees of decentralization.{' '}
-          <span className="font-semibold">Bridge at your own risk.</span>
+          Independent projects using Arbitrum technology. Orbit chains have varying degrees of decentralization. <span className="font-semibold">Bridge at your own risk.</span>
         </span>
       </p>
-    )
-  }
+    ),
+  },
 }
 
-function ChainTypeInfoRow({
-  chainGroup,
-  style
-}: {
-  chainGroup: ChainGroupInfo
-  style: CSSProperties
-}) {
+function ChainTypeInfoRow({ chainGroup, style }: { chainGroup: ChainGroupInfo; style: CSSProperties }) {
   const { name, description } = chainGroup
   const isCoreGroup = chainGroup.name === ChainGroupName.core
 
   return (
-    <div
-      key={name}
-      style={style}
-      className={twMerge(
-        'px-4 py-3',
-        !isCoreGroup &&
-          'before:-mt-3 before:mb-3 before:block before:h-[1px] before:w-full before:bg-white/30 before:content-[""]'
-      )}
-    >
+    <div key={name} style={style} className={twMerge('px-4 py-3', !isCoreGroup && 'before:-mt-3 before:mb-3 before:block before:h-[1px] before:w-full before:bg-white/30 before:content-[""]')}>
       <p className="text-sm text-white/70">{name}</p>
       {description}
     </div>
   )
 }
 
-export function NetworkButton({
-  type,
-  onClick
-}: {
-  type: 'source' | 'destination'
-  onClick: () => void
-}) {
+export function NetworkButton({ type, onClick }: { type: 'source' | 'destination'; onClick: () => void }) {
   const [networks] = useNetworks()
   const { isSmartContractWallet, isLoading } = useAccountType()
   const isSource = type === 'source'
   const chains = useChainIdsForNetworkSelection({ isSource })
 
-  const selectedChainId = isSource
-    ? networks.sourceChain.id
-    : networks.destinationChain.id
+  const selectedChainId = isSource ? networks.sourceChain.id : networks.destinationChain.id
 
   const hasOneOrLessChain = chains.length <= 1
 
   const disabled = hasOneOrLessChain || isSmartContractWallet || isLoading
 
   const buttonStyle = {
-    backgroundColor: getBridgeUiConfigForChain(selectedChainId).color
+    backgroundColor: getBridgeUiConfigForChain(selectedChainId).color,
   }
 
   return (
-    <button
-      style={buttonStyle}
-      className={twMerge(
-        'arb-hover flex w-max items-center gap-1 rounded px-3 py-2 text-sm text-white outline-none md:gap-2 md:text-2xl'
-      )}
-      disabled={disabled}
-      onClick={onClick}
-    >
+    <button style={buttonStyle} className={twMerge('arb-hover flex w-max items-center gap-1 rounded px-3 py-2 text-sm text-white outline-none md:gap-2 md:text-2xl')} disabled={disabled} onClick={onClick}>
       <span className="max-w-[220px] truncate text-sm leading-[1.1] md:max-w-[250px] md:text-xl">
         {isSource ? 'From:' : 'To: '} {getNetworkName(selectedChainId)}
       </span>
@@ -130,19 +89,7 @@ export function NetworkButton({
   )
 }
 
-function NetworkRow({
-  chainId,
-  isSelected,
-  style,
-  onClick,
-  close
-}: {
-  chainId: ChainId
-  isSelected: boolean
-  style: CSSProperties
-  onClick: (value: Chain) => void
-  close: (focusableElement?: HTMLElement) => void
-}) {
+function NetworkRow({ chainId, isSelected, style, onClick, close }: { chainId: ChainId; isSelected: boolean; style: CSSProperties; onClick: (value: Chain) => void; close: (focusableElement?: HTMLElement) => void }) {
   const { network, nativeTokenData } = getBridgeUiConfigForChain(chainId)
   const chain = getWagmiChain(chainId)
 
@@ -163,31 +110,17 @@ function NetworkRow({
         isSelected && 'bg-white/10' // selected row
       )}
     >
-      <NetworkImage
-        chainId={chainId}
-        className="h-[32px] w-[32px] p-[6px]"
-        size={20}
-      />
+      <NetworkImage chainId={chainId} className="h-[32px] w-[32px] p-[6px]" size={20} />
       <div className={twMerge('flex flex-col items-start gap-1')}>
         <span className="truncate leading-[1.1]">{network.name}</span>
-        {network.description && (
-          <p className="whitespace-pre-wrap text-left text-xs leading-[1.15] text-white/70">
-            {network.description}
-          </p>
-        )}
-        <p className="text-[10px] leading-none text-white/50">
-          {nativeTokenData?.symbol ?? 'ETH'} is the native gas token
-        </p>
+        {network.description && <p className="whitespace-pre-wrap text-left text-xs leading-[1.15] text-white/70">{network.description}</p>}
+        <p className="text-[10px] leading-none text-white/50">{nativeTokenData?.symbol ?? 'ETH'} is the native gas token</p>
       </div>
     </button>
   )
 }
 
-function AddCustomOrbitChainButton({
-  closeDialog
-}: {
-  closeDialog: (focusableElement?: HTMLElement) => void
-}) {
+function AddCustomOrbitChainButton({ closeDialog }: { closeDialog: (focusableElement?: HTMLElement) => void }) {
   const [, setQueryParams] = useArbQueryParams()
   const [isTestnetMode] = useIsTestnetMode()
 
@@ -207,17 +140,7 @@ function AddCustomOrbitChainButton({
   )
 }
 
-function NetworksPanel({
-  chainIds,
-  selectedChainId,
-  onNetworkRowClick,
-  close
-}: {
-  chainIds: ChainId[]
-  selectedChainId: ChainId
-  onNetworkRowClick: (value: Chain) => void
-  close: (focusableElement?: HTMLElement) => void
-}) {
+function NetworksPanel({ chainIds, selectedChainId, onNetworkRowClick, close }: { chainIds: ChainId[]; selectedChainId: ChainId; onNetworkRowClick: (value: Chain) => void; close: (focusableElement?: HTMLElement) => void }) {
   const [errorMessage, setErrorMessage] = useState('')
   const [networkSearched, setNetworkSearched] = useState('')
   const debouncedNetworkSearched = useDebounce(networkSearched, 200)
@@ -228,46 +151,40 @@ function NetworksPanel({
     const _networkSearched = debouncedNetworkSearched.trim().toLowerCase()
 
     if (_networkSearched) {
-      return chainIds.filter(chainId => {
-        const networkName =
-          getBridgeUiConfigForChain(chainId).network.name.toLowerCase()
+      return chainIds.filter((chainId) => {
+        const networkName = getBridgeUiConfigForChain(chainId).network.name.toLowerCase()
         return networkName.includes(_networkSearched)
       })
     }
 
-    const coreNetworks = chainIds.filter(
-      chainId => !isNetwork(chainId).isOrbitChain
-    )
-    const orbitNetworks = chainIds.filter(
-      chainId => isNetwork(chainId).isOrbitChain
-    )
+    const coreNetworks = []
+    const orbitNetworks = chainIds.filter((chainId) => isNetwork(chainId).isOrbitChain)
 
     return {
       core: coreNetworks,
-      orbit: orbitNetworks
+      orbit: orbitNetworks,
     }
   }, [debouncedNetworkSearched, chainIds])
 
   const isNetworkSearchResult = Array.isArray(networksToShow)
 
-  const networkRowsWithChainInfoRows: (ChainId | ChainGroupName)[] =
-    useMemo(() => {
-      if (isNetworkSearchResult) {
-        return networksToShow
-      }
+  const networkRowsWithChainInfoRows: (ChainId | ChainGroupName)[] = useMemo(() => {
+    if (isNetworkSearchResult) {
+      return networksToShow
+    }
 
-      const groupedNetworks = []
+    const groupedNetworks = []
 
-      if (networksToShow.core.length > 0) {
-        groupedNetworks.push(ChainGroupName.core, ...networksToShow.core)
-      }
+    if (networksToShow.core.length > 0) {
+      groupedNetworks.push(ChainGroupName.core, ...networksToShow.core)
+    }
 
-      if (networksToShow.orbit.length > 0) {
-        groupedNetworks.push(ChainGroupName.orbit, ...networksToShow.orbit)
-      }
+    if (networksToShow.orbit.length > 0) {
+      groupedNetworks.push(ChainGroupName.orbit, ...networksToShow.orbit)
+    }
 
-      return groupedNetworks
-    }, [isNetworkSearchResult, networksToShow])
+    return groupedNetworks
+  }, [isNetworkSearchResult, networksToShow])
 
   function getRowHeight({ index }: { index: number }) {
     const rowItemOrChainId = networkRowsWithChainInfoRows[index]
@@ -297,61 +214,27 @@ function NetworksPanel({
       }
 
       if (networkOrChainTypeName === ChainGroupName.core) {
-        return (
-          <ChainTypeInfoRow chainGroup={chainGroupInfo.core} style={style} />
-        )
+        return <ChainTypeInfoRow chainGroup={chainGroupInfo.core} style={style} />
       }
 
       if (networkOrChainTypeName === ChainGroupName.orbit) {
-        return (
-          <ChainTypeInfoRow chainGroup={chainGroupInfo.orbit} style={style} />
-        )
+        return <ChainTypeInfoRow chainGroup={chainGroupInfo.orbit} style={style} />
       }
 
-      return (
-        <NetworkRow
-          key={networkOrChainTypeName}
-          style={style}
-          chainId={networkOrChainTypeName}
-          isSelected={networkOrChainTypeName === selectedChainId}
-          onClick={onNetworkRowClick}
-          close={close}
-        />
-      )
+      return <NetworkRow key={networkOrChainTypeName} style={style} chainId={networkOrChainTypeName} isSelected={networkOrChainTypeName === selectedChainId} onClick={onNetworkRowClick} close={close} />
     },
     [close, networkRowsWithChainInfoRows, onNetworkRowClick, selectedChainId]
   )
 
-  const onSearchInputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setErrorMessage('')
-      setNetworkSearched(event.target.value)
-    },
-    []
-  )
+  const onSearchInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMessage('')
+    setNetworkSearched(event.target.value)
+  }, [])
 
   return (
     <div className="flex flex-col gap-4">
-      <SearchPanelTable
-        searchInputPlaceholder="Search a network name"
-        searchInputValue={networkSearched}
-        searchInputOnChange={onSearchInputChange}
-        errorMessage={errorMessage}
-        isDialog
-      >
-        <AutoSizer>
-          {({ height, width }) => (
-            <List
-              ref={listRef}
-              width={width - 2}
-              height={height}
-              rowCount={networkRowsWithChainInfoRows.length}
-              rowHeight={getRowHeight}
-              rowRenderer={rowRenderer}
-              listRef={listRef}
-            />
-          )}
-        </AutoSizer>
+      <SearchPanelTable searchInputPlaceholder="Search a network name" searchInputValue={networkSearched} searchInputOnChange={onSearchInputChange} errorMessage={errorMessage} isDialog>
+        <AutoSizer>{({ height, width }) => <List ref={listRef} width={width - 2} height={height} rowCount={networkRowsWithChainInfoRows.length} rowHeight={getRowHeight} rowRenderer={rowRenderer} listRef={listRef} />}</AutoSizer>
       </SearchPanelTable>
       <div className="flex justify-between pb-2">
         <TestnetToggle label="Testnet mode" includeToggleStateOnLabel />
@@ -372,12 +255,10 @@ export const NetworkSelectionContainer = (
 
   const isSource = props.type === 'source'
 
-  const selectedChainId = isSource
-    ? networks.sourceChain.id
-    : networks.destinationChain.id
+  const selectedChainId = isSource ? networks.sourceChain.id : networks.destinationChain.id
 
   const supportedChainIds = useChainIdsForNetworkSelection({
-    isSource
+    isSource,
   })
 
   const onNetworkRowClick = useCallback(
@@ -392,7 +273,7 @@ export const NetworkSelectionContainer = (
       if (networks[pairedChain].id === value.id) {
         setNetworks({
           sourceChainId: networks.destinationChain.id,
-          destinationChainId: networks.sourceChain.id
+          destinationChainId: networks.sourceChain.id,
         })
         return
       }
@@ -401,7 +282,7 @@ export const NetworkSelectionContainer = (
       // this way, the destination doesn't reset to the default chain if the source chain is changed, and if both are valid
       setNetworks({
         sourceChainId: isSource ? value.id : networks.sourceChain.id,
-        destinationChainId: isSource ? networks.destinationChain.id : value.id
+        destinationChainId: isSource ? networks.destinationChain.id : value.id,
       })
 
       actions.app.setSelectedToken(null)
@@ -411,22 +292,10 @@ export const NetworkSelectionContainer = (
 
   return (
     <>
-      <Dialog
-        {...props}
-        onClose={() => props.onClose(false)}
-        title={`Select ${isSource ? 'Source' : 'Destination'} Network`}
-        actionButtonProps={{ hidden: true }}
-        isFooterHidden={true}
-        className="h-screen overflow-hidden md:h-[calc(100vh_-_200px)] md:max-h-[900px] md:max-w-[500px]"
-      >
+      <Dialog {...props} onClose={() => props.onClose(false)} title={`Select ${isSource ? 'Source' : 'Destination'} Network`} actionButtonProps={{ hidden: true }} isFooterHidden={true} className="h-screen overflow-hidden md:h-[calc(100vh_-_200px)] md:max-h-[900px] md:max-w-[500px]">
         <SearchPanel>
           <SearchPanel.MainPage className="flex h-full max-w-[500px] flex-col py-4">
-            <NetworksPanel
-              chainIds={supportedChainIds}
-              selectedChainId={selectedChainId}
-              close={() => props.onClose(false)}
-              onNetworkRowClick={onNetworkRowClick}
-            />
+            <NetworksPanel chainIds={supportedChainIds} selectedChainId={selectedChainId} close={() => props.onClose(false)} onNetworkRowClick={onNetworkRowClick} />
           </SearchPanel.MainPage>
         </SearchPanel>
       </Dialog>

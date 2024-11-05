@@ -49,27 +49,46 @@ export function Layout(props: LayoutProps) {
         <div className="flex flex-row">
           <Image src={Logo} alt="Logo" className="mt-2 h-10 w-50" /> {/* 添加LOGO */}
           {/* <AppSidebar /> */}
-          <main className="grow">{props.children}</main>
+          <main className="mr-50 grow">{props.children}</main>
           <Toast />
         </div>
 
-        <footer className="bg-black py-4 text-center text-white">
-          <p className="mb-1">
-            <a href="https://arbitrum.io/tos" target="_blank" rel="noopener noreferrer" className="mr-4 text-white underline hover:text-gray-400" onClick={(e) => e.stopPropagation()}>
-              ToS
-            </a>
-            <a href="https://arbitrum.io/privacy" target="_blank" className="mr-4 text-white underline hover:text-gray-400" onClick={(e) => e.stopPropagation()}>
+        <footer className="footer">
+          <div className="footer-content">
+            <a href="https://play.hyperagi.network/privacyPolicy" target="_blank" className="footer-link">
               Privacy Policy
             </a>
-            <a href="https://arbitrumfoundation.notion.site/arbitrumfoundation/Arbitrum-Brand-Kit-48751dc5e03240a5872496283f088f79" target="_blank" className="text-white underline hover:text-gray-400" onClick={(e) => e.stopPropagation()}>
-              Media Kit
-            </a>
-          </p>
-          <a href="https://arbitrum.io/" target="_blank" className="text-xs">
-            Built with love by Offchain Labs, builders of Arbitrum technology.
-          </a>
+            <span className="footer-copyright">&copy; 2024 HYPERDUST FOUNDATION LTD.. All rights reserved.</span>
+          </div>
         </footer>
       </div>
+      <style jsx>{`
+        .footer {
+          background-color: #333;
+          padding: 20px 0;
+          text-align: center;
+        }
+
+        .footer-content {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .footer-link {
+          color: #fff;
+          text-decoration: none;
+          margin-right: 20px;
+        }
+
+        .footer-link:hover {
+          text-decoration: underline;
+        }
+
+        .footer-copyright {
+          color: #aaa;
+          font-size: 14px;
+        }
+      `}</style>
     </div>
   )
 }

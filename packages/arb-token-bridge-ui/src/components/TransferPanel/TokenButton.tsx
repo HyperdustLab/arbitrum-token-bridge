@@ -8,11 +8,7 @@ import { sanitizeImageSrc } from '../../util'
 import { TokenSearch } from '../TransferPanel/TokenSearch'
 import { sanitizeTokenSymbol } from '../../util/TokenUtils'
 import { useNativeCurrency } from '../../hooks/useNativeCurrency'
-import {
-  onPopoverButtonClick,
-  onPopoverClose,
-  panelWrapperClassnames
-} from '../common/SearchPanel/SearchPanelUtils'
+import { onPopoverButtonClick, onPopoverClose, panelWrapperClassnames } from '../common/SearchPanel/SearchPanelUtils'
 import { useNetworks } from '../../hooks/useNetworks'
 import { useNetworksRelationship } from '../../hooks/useNetworksRelationship'
 import { Transition } from '../common/Transition'
@@ -22,8 +18,8 @@ export function TokenButton(): JSX.Element {
     app: {
       selectedToken,
       arbTokenBridge: { bridgeTokens },
-      arbTokenBridgeLoaded
-    }
+      arbTokenBridgeLoaded,
+    },
   } = useAppState()
   const [networks] = useNetworks()
   const { childChainProvider } = useNetworksRelationship(networks)
@@ -46,12 +42,7 @@ export function TokenButton(): JSX.Element {
       return sanitizeImageSrc(logo)
     }
     return undefined
-  }, [
-    nativeCurrency,
-    bridgeTokens,
-    selectedToken?.address,
-    arbTokenBridgeLoaded
-  ])
+  }, [nativeCurrency, bridgeTokens, selectedToken?.address, arbTokenBridgeLoaded])
 
   const tokenSymbol = useMemo(() => {
     if (!selectedToken) {
@@ -60,7 +51,7 @@ export function TokenButton(): JSX.Element {
 
     return sanitizeTokenSymbol(selectedToken.symbol, {
       erc20L1Address: selectedToken.address,
-      chainId: networks.sourceChain.id
+      chainId: networks.sourceChain.id,
     })
   }, [selectedToken, networks.sourceChain.id, nativeCurrency.symbol])
 
@@ -69,11 +60,7 @@ export function TokenButton(): JSX.Element {
       <Popover className="relative">
         {({ open }) => (
           <>
-            <Popover.Button
-              className="arb-hover h-full w-max rounded-bl rounded-tl px-3 py-3 text-white"
-              aria-label="Select Token"
-              onClick={onPopoverButtonClick}
-            >
+            <Popover.Button className="arb-hover h-full w-max rounded-bl rounded-tl px-3 py-3 text-white" aria-label="Select Token" onClick={onPopoverButtonClick}>
               <div className="flex items-center gap-2">
                 {/* Commenting it out until we update the token image source files to be of better quality */}
                 {/* {tokenLogo && ( 
@@ -87,15 +74,8 @@ export function TokenButton(): JSX.Element {
                     className="h-5 w-5 sm:h-7 sm:w-7"
                   />
                 )} */}
-                <span className="text-xl font-light sm:text-3xl">
-                  {tokenSymbol}
-                </span>
-                <ChevronDownIcon
-                  className={twMerge(
-                    'h-3 w-3 text-gray-6 transition-transform duration-200',
-                    open ? '-rotate-180' : 'rotate-0'
-                  )}
-                />
+                <span className="text-xl font-light sm:text-3xl">{tokenSymbol}</span>
+                {/* <ChevronDownIcon className={twMerge('h-3 w-3 text-gray-6 transition-transform duration-200', open ? '-rotate-180' : 'rotate-0')} /> */}
               </div>
             </Popover.Button>
 
@@ -105,7 +85,7 @@ export function TokenButton(): JSX.Element {
               className="fixed left-0 top-0 z-20 sm:absolute sm:top-[76px] sm:max-w-[466px]"
               afterLeave={onPopoverClose}
             >
-              <Popover.Panel
+              {/* <Popover.Panel
                 className={twMerge(panelWrapperClassnames, 'px-5 py-4')}
               >
                 {({ close }) => {
@@ -115,7 +95,7 @@ export function TokenButton(): JSX.Element {
                   }
                   return <TokenSearch close={onClose} />
                 }}
-              </Popover.Panel>
+              </Popover.Panel> */}
             </Transition>
           </>
         )}

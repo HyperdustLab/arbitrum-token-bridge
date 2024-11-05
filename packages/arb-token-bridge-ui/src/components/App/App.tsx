@@ -2,12 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import * as Sentry from '@sentry/react'
 
 import { useAccount, useNetwork, WagmiConfig, useDisconnect } from 'wagmi'
-import {
-  darkTheme,
-  RainbowKitProvider,
-  Theme,
-  useConnectModal
-} from '@rainbow-me/rainbowkit'
+import { darkTheme, RainbowKitProvider, Theme, useConnectModal } from '@rainbow-me/rainbowkit'
 import merge from 'lodash-es/merge'
 import axios from 'axios'
 import { createOvermind, Overmind } from 'overmind'
@@ -27,10 +22,7 @@ import { TokenListSyncer } from '../syncers/TokenListSyncer'
 import { Header } from '../common/Header'
 import { HeaderAccountPopover } from '../common/HeaderAccountPopover'
 import { getNetworkName, isNetwork, rpcURLs } from '../../util/networks'
-import {
-  ArbQueryParamProvider,
-  useArbQueryParams
-} from '../../hooks/useArbQueryParams'
+import { ArbQueryParamProvider, useArbQueryParams } from '../../hooks/useArbQueryParams'
 import { TOS_LOCALSTORAGE_KEY } from '../../constants'
 import { getProps } from '../../util/wagmi/setup'
 import { useAccountIsBlocked } from '../../hooks/useAccountIsBlocked'
@@ -51,28 +43,26 @@ declare global {
 
 const rainbowkitTheme = merge(darkTheme(), {
   colors: {
-    accentColor: 'var(--blue-link)'
+    accentColor: 'var(--blue-link)',
   },
   fonts: {
-    body: 'Roboto, sans-serif'
-  }
+    body: 'Roboto, sans-serif',
+  },
 } as Theme)
 
 const ArbTokenBridgeStoreSyncWrapper = (): JSX.Element | null => {
   const actions = useActions()
   const {
-    app: { selectedToken }
+    app: { selectedToken },
   } = useAppState()
   const [networks] = useNetworks()
-  const { childChain, childChainProvider, parentChain, parentChainProvider } =
-    useNetworksRelationship(networks)
+  const { childChain, childChainProvider, parentChain, parentChainProvider } = useNetworksRelationship(networks)
   const nativeCurrency = useNativeCurrency({ provider: childChainProvider })
 
   // We want to be sure this fetch is completed by the time we open the USDC modals
   useCCTPIsBlocked()
 
-  const [tokenBridgeParams, setTokenBridgeParams] =
-    useState<TokenBridgeParams | null>(null)
+  const [tokenBridgeParams, setTokenBridgeParams] = useState<TokenBridgeParams | null>(null)
 
   useEffect(() => {
     if (!nativeCurrency.isCustom) {
@@ -86,10 +76,7 @@ const ArbTokenBridgeStoreSyncWrapper = (): JSX.Element | null => {
     // Your setup is: from Arbitrum One to Mainnet, and you have $ARB selected as the token you want to bridge over.
     // You then switch your destination network to a network that has $ARB as its native currency.
     // For this network, $ARB can only be bridged as the native currency, and not as a standard ERC-20, which is why we have to reset the selected token.
-    if (
-      selectedTokenAddress === nativeCurrency.address ||
-      selectedTokenL2Address === nativeCurrency.address
-    ) {
+    if (selectedTokenAddress === nativeCurrency.address || selectedTokenL2Address === nativeCurrency.address) {
       actions.app.setSelectedToken(null)
     }
   }, [selectedToken, nativeCurrency])
@@ -100,24 +87,16 @@ const ArbTokenBridgeStoreSyncWrapper = (): JSX.Element | null => {
     setTokenBridgeParams(null)
     actions.app.setConnectionState(ConnectionState.LOADING)
 
-    const {
-      isArbitrum: isConnectedToArbitrum,
-      isOrbitChain: isConnectedToOrbitChain
-    } = isNetwork(networks.sourceChain.id)
-    const isParentChainEthereum = isNetwork(
-      parentChain.id
-    ).isEthereumMainnetOrTestnet
+    const { isArbitrum: isConnectedToArbitrum, isOrbitChain: isConnectedToOrbitChain } = isNetwork(networks.sourceChain.id)
+    const isParentChainEthereum = isNetwork(parentChain.id).isEthereumMainnetOrTestnet
 
     actions.app.reset(networks.sourceChain.id)
     actions.app.setChainIds({
       l1NetworkChainId: parentChain.id,
-      l2NetworkChainId: childChain.id
+      l2NetworkChainId: childChain.id,
     })
 
-    if (
-      (isParentChainEthereum && isConnectedToArbitrum) ||
-      isConnectedToOrbitChain
-    ) {
+    if ((isParentChainEthereum && isConnectedToArbitrum) || isConnectedToOrbitChain) {
       console.info('Withdrawal mode detected:')
       actions.app.setConnectionState(ConnectionState.L2_CONNECTED)
     } else {
@@ -128,32 +107,22 @@ const ArbTokenBridgeStoreSyncWrapper = (): JSX.Element | null => {
     setTokenBridgeParams({
       l1: {
         network: parentChain,
-        provider: parentChainProvider
+        provider: parentChainProvider,
       },
       l2: {
         network: childChain,
-        provider: childChainProvider
-      }
+        provider: childChainProvider,
+      },
     })
-  }, [
-    networks.sourceChain.id,
-    parentChain.id,
-    childChain.id,
-    parentChain,
-    childChain,
-    parentChainProvider,
-    childChainProvider
-  ])
+  }, [networks.sourceChain.id, parentChain.id, childChain.id, parentChain, childChain, parentChainProvider, childChainProvider])
 
   useEffect(() => {
     axios
-      .get(
-        'https://raw.githubusercontent.com/OffchainLabs/arb-token-lists/aff40a59608678cfd9b034dd198011c90b65b8b6/src/WarningList/warningTokens.json'
-      )
-      .then(res => {
+      .get('https://raw.githubusercontent.com/OffchainLabs/arb-token-lists/aff40a59608678cfd9b034dd198011c90b65b8b6/src/WarningList/warningTokens.json')
+      .then((res) => {
         actions.app.setWarningTokens(res.data)
       })
-      .catch(err => {
+      .catch((err) => {
         console.warn('Failed to fetch warning tokens:', err)
       })
   }, [])
@@ -222,15 +191,9 @@ function AppContent() {
 
   useEffect(() => {
     Sentry.setTag('network.parent_chain_id', parentChain.id)
-    Sentry.setTag(
-      'network.parent_chain_rpc_url',
-      getBaseUrl(rpcURLs[parentChain.id] ?? '')
-    )
+    Sentry.setTag('network.parent_chain_rpc_url', getBaseUrl(rpcURLs[parentChain.id] ?? ''))
     Sentry.setTag('network.child_chain_id', childChain.id)
-    Sentry.setTag(
-      'network.child_chain_rpc_url',
-      getBaseUrl(rpcURLs[childChain.id] ?? '')
-    )
+    Sentry.setTag('network.child_chain_rpc_url', getBaseUrl(rpcURLs[childChain.id] ?? ''))
   }, [childChain.id, parentChain.id])
 
   if (!tosAccepted) {
@@ -251,9 +214,7 @@ function AppContent() {
 
         <div className="flex flex-col items-start gap-4 px-6 pb-8 pt-12 text-white">
           <p className="text-5xl">No wallet connected</p>
-          <p className="text-xl">
-            Please connect your wallet to use the bridge.
-          </p>
+          <p className="text-xl">Please connect your wallet to use the bridge.</p>
         </div>
       </>
     )
@@ -299,12 +260,8 @@ const { wagmiConfigProps, rainbowKitProviderProps } = getProps(targetChainKey)
 // Clear cache for everything related to WalletConnect v2.
 //
 // TODO: Remove this once the fix for the infinite loop / memory leak is identified.
-Object.keys(localStorage).forEach(key => {
-  if (
-    key === 'wagmi.requestedChains' ||
-    key === 'wagmi.store' ||
-    key.startsWith('wc@2')
-  ) {
+Object.keys(localStorage).forEach((key) => {
+  if (key === 'wagmi.requestedChains' || key === 'wagmi.store' || key.startsWith('wc@2')) {
     localStorage.removeItem(key)
   }
 })
@@ -314,11 +271,10 @@ function ConnectedChainSyncer() {
   const [shouldSync, setShouldSync] = useState(false)
   const [didSync, setDidSync] = useState(false)
   const { disconnect } = useDisconnect({
-    onSettled: onDisconnectHandler
+    onSettled: onDisconnectHandler,
   })
 
-  const [{ sourceChain, destinationChain }, setQueryParams] =
-    useArbQueryParams()
+  const [{ sourceChain, destinationChain }, setQueryParams] = useArbQueryParams()
   const { chain } = useNetwork()
 
   const setSourceChainToConnectedChain = useCallback(() => {
@@ -326,11 +282,10 @@ function ConnectedChainSyncer() {
       return
     }
 
-    const { sourceChainId: sourceChain, destinationChainId: destinationChain } =
-      sanitizeQueryParams({
-        sourceChainId: chain.id,
-        destinationChainId: undefined
-      })
+    const { sourceChainId: sourceChain, destinationChainId: destinationChain } = sanitizeQueryParams({
+      sourceChainId: chain.id,
+      destinationChainId: undefined,
+    })
 
     setQueryParams({ sourceChain, destinationChain })
   }, [chain, setQueryParams])
@@ -343,31 +298,19 @@ function ConnectedChainSyncer() {
       if (!address) {
         return
       }
-      const isSmartContractWallet = await addressIsSmartContract(
-        address,
-        chain.id
-      )
+      const isSmartContractWallet = await addressIsSmartContract(address, chain.id)
       if (isSmartContractWallet && sourceChain !== chain.id) {
         const chainName = getNetworkName(chain.id)
 
         setSourceChainToConnectedChain()
 
-        window.alert(
-          `You're connected to the app with a smart contract wallet on ${chainName}. In order to properly enable transfers, the app will now reload.\n\nPlease reconnect after the reload.`
-        )
+        window.alert(`You're connected to the app with a smart contract wallet on ${chainName}. In order to properly enable transfers, the app will now reload.\n\nPlease reconnect after the reload.`)
         disconnect()
       }
     }
 
     checkCorrectChainForSmartContractWallet()
-  }, [
-    address,
-    chain,
-    disconnect,
-    setQueryParams,
-    setSourceChainToConnectedChain,
-    sourceChain
-  ])
+  }, [address, chain, disconnect, setQueryParams, setSourceChainToConnectedChain, sourceChain])
 
   useEffect(() => {
     if (shouldSync) {
@@ -375,10 +318,7 @@ function ConnectedChainSyncer() {
     }
 
     // Only sync connected chain to query params if the query params were not initially provided
-    if (
-      typeof sourceChain === 'undefined' &&
-      typeof destinationChain === 'undefined'
-    ) {
+    if (typeof sourceChain === 'undefined' && typeof destinationChain === 'undefined') {
       setShouldSync(true)
     }
   }, [shouldSync, sourceChain, destinationChain])
@@ -389,13 +329,7 @@ function ConnectedChainSyncer() {
       setSourceChainToConnectedChain()
       setDidSync(true)
     }
-  }, [
-    chain,
-    shouldSync,
-    didSync,
-    setQueryParams,
-    setSourceChainToConnectedChain
-  ])
+  }, [chain, shouldSync, didSync, setQueryParams, setSourceChainToConnectedChain])
 
   return null
 }
@@ -407,10 +341,7 @@ export default function App() {
     <Provider value={overmind}>
       <ArbQueryParamProvider>
         <WagmiConfig {...wagmiConfigProps}>
-          <RainbowKitProvider
-            theme={rainbowkitTheme}
-            {...rainbowKitProviderProps}
-          >
+          <RainbowKitProvider theme={rainbowkitTheme} {...rainbowKitProviderProps}>
             <ConnectedChainSyncer />
             <AppContextProvider>
               <AppContent />

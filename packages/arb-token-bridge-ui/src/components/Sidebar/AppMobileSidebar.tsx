@@ -10,8 +10,8 @@ import { AccountMenuItem } from './AccountMenuItem'
 // Dynamically import the MobileSidebar component with SSR disabled
 const DynamicMobileSidebar = dynamic(
   () =>
-    import('@offchainlabs/cobalt').then(mod => ({
-      default: mod.MobileSidebar
+    import('@offchainlabs/cobalt').then((mod) => ({
+      default: mod.MobileSidebar,
     })),
   { ssr: false }
 )
@@ -21,26 +21,12 @@ export const AppMobileSidebar: React.FC<React.PropsWithChildren> = () => {
   const { isConnected } = useAccount()
 
   return (
-    <div className="flex flex-col justify-center sm:hidden">
-      <DynamicMobileSidebar
-        logger={posthog}
-        activeMenu="Bridge"
-        mobileToggleButtonClassOverrides="bg-transparent"
-      >
+    <div className=" flex flex-col justify-center sm:hidden">
+      <DynamicMobileSidebar logger={posthog} activeMenu="Bridge" mobileToggleButtonClassOverrides="bg-transparent">
         {isConnected ? (
           <AccountMenuItem />
         ) : (
-          <ConnectButton.Custom>
-            {({ openConnectModal }) => (
-              <MenuItem
-                title="Connect Wallet"
-                onClick={openConnectModal}
-                Icon={<PlusCircleIcon className="h-[24px] w-[24px] stroke-1" />}
-                className="border-lime-dark bg-lime-dark py-3"
-                isMobile
-              />
-            )}
-          </ConnectButton.Custom>
+          <ConnectButton.Custom>{({ openConnectModal }) => <MenuItem title="Connect Wallet" onClick={openConnectModal} Icon={<PlusCircleIcon className="h-[24px] w-[24px] stroke-1" />} className="border-lime-dark bg-lime-dark py-3" isMobile />}</ConnectButton.Custom>
         )}
       </DynamicMobileSidebar>
     </div>

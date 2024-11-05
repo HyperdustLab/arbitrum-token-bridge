@@ -7,18 +7,23 @@ WORKDIR /app
 # Copy the rest of the project files
 COPY . .
 
-RUN cd packages/arb-token-bridge-ui/
+# 切换到正确的工作目录
+WORKDIR /app/packages/arb-token-bridge-ui
 
-# Install project dependencies
-RUN yarn
+# 设置环境变量避免Cypress下载问题
+ENV CYPRESS_INSTALL_BINARY=0
 
+# 安装依赖
+RUN yarn install --ignore-scripts
+
+# 运行lint
 RUN npm run lint:fix
 
-# Build the project (optional, if a build step is needed)
+# 构建项目
 RUN yarn build
 
-# Expose the application port (set the port according to your application)
+# 暴露端口
 EXPOSE 3000
 
-# Start the application
+# 启动应用
 CMD ["yarn", "start"]
