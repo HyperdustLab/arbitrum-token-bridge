@@ -237,7 +237,7 @@ function NetworksPanel({ chainIds, selectedChainId, onNetworkRowClick, close }: 
         <AutoSizer>{({ height, width }) => <List ref={listRef} width={width - 2} height={height} rowCount={networkRowsWithChainInfoRows.length} rowHeight={getRowHeight} rowRenderer={rowRenderer} listRef={listRef} />}</AutoSizer>
       </SearchPanelTable>
       <div className="flex justify-between pb-2">
-        <TestnetToggle label="Testnet mode" includeToggleStateOnLabel />
+        {/* <TestnetToggle label="Testnet mode" includeToggleStateOnLabel /> */}
         <AddCustomOrbitChainButton closeDialog={close} />
       </div>
     </div>

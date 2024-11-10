@@ -55,6 +55,10 @@ export function Layout(props: LayoutProps) {
 
         <footer className="footer">
           <div className="footer-content">
+            <a href="https://play.hyperagi.network/termsService" target="_blank" className="footer-link">
+              Terms of Service
+            </a>
+
             <a href="https://play.hyperagi.network/privacyPolicy" target="_blank" className="footer-link">
               Privacy Policy
             </a>
