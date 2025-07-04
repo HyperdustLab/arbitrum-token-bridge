@@ -3536,7 +3536,7 @@ append-transform@^2.0.0:
   dependencies:
     arb-token-bridge-ui-mono "file:"
 
-"arb-token-bridge-ui@file:d:\\mossai\\arbitrum-token-bridge\\packages\\arb-token-bridge-ui":
+"arb-token-bridge-ui@file:d:\\project\\arbitrum-token-bridge\\packages\\arb-token-bridge-ui":
   version "3.3.0"
   resolved "file:packages/arb-token-bridge-ui"
   dependencies:
