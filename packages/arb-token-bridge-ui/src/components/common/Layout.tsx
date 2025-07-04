@@ -47,7 +47,7 @@ export function Layout(props: LayoutProps) {
       <Image src={EclipseBottom} alt="grains" className="absolute bottom-0 left-1/2 w-full -translate-x-1/2 opacity-20" aria-hidden />
       <div className="relative flex flex-col sm:min-h-screen">
         <div className="flex flex-row">
-          <Image src={Logo} alt="Logo" className="mt-2 h-10 w-50" /> {/* 添加LOGO */}
+          <Image src={Logo} alt="Logo" className="mt-2 h-10 w-50 object-contain" /> {/* 添加LOGO */}
           {/* <AppSidebar /> */}
           <main className="mr-50 grow">{props.children}</main>
           <Toast />
@@ -55,14 +55,14 @@ export function Layout(props: LayoutProps) {
 
         <footer className="footer">
           <div className="footer-content">
-            <a href="https://play.hyperagi.network/termsService" target="_blank" className="footer-link">
+            <a href="https://app.mossai.com/termsService" target="_blank" className="footer-link">
               Terms of Service
             </a>
 
-            <a href="https://play.hyperagi.network/privacyPolicy" target="_blank" className="footer-link">
+            <a href="https://app.mossai.com/privacyPolicy" target="_blank" className="footer-link">
               Privacy Policy
             </a>
-            <span className="footer-copyright">&copy; 2024 HYPERDUST FOUNDATION LTD.. All rights reserved.</span>
+            <span className="footer-copyright">&copy; 2025 HYPERDUST FOUNDATION LTD.. All rights reserved.</span>
           </div>
         </footer>
       </div>
