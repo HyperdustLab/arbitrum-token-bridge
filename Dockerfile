@@ -13,6 +13,9 @@ WORKDIR /app/packages/arb-token-bridge-ui
 # 设置环境变量避免Cypress下载问题
 ENV CYPRESS_INSTALL_BINARY=0
 
+# 设置 EDGE_CONFIG 环境变量以避免 @vercel/edge-config 错误
+ENV EDGE_CONFIG=""
+
 # 安装依赖
 RUN yarn install --ignore-scripts
 
