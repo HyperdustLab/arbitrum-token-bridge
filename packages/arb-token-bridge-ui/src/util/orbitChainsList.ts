@@ -38,7 +38,7 @@ export const orbitTestnets: { [key in number]: OrbitChainConfig } = {
       sequencerInbox: '0xfe41991969CF568e8420F0F309d24DC20Fc0d3a3'
     },
     nativeToken: '0x74B1A2E85462a102509aeE0Ee899BD3F7aA69E1F',
-    explorerUrl: 'https://explorer.hyperagi.ai',
+    explorerUrl: 'https://hyperscan.hyperagi.ai',
     rpcUrl: 'https://rpc.hyperagi.ai',
     isCustom: true,
     isTestnet: false,
