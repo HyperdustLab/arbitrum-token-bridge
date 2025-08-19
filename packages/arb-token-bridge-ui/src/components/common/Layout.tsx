@@ -47,7 +47,9 @@ export function Layout(props: LayoutProps) {
       <Image src={EclipseBottom} alt="grains" className="absolute bottom-0 left-1/2 w-full -translate-x-1/2 opacity-20" aria-hidden />
       <div className="relative flex flex-col sm:min-h-screen">
         <div className="flex flex-row">
-          <Image src={Logo} alt="Logo" className="mt-2 h-10 w-50 object-contain" /> {/* 添加LOGO */}
+          <a href="https://www.hyperagi.ai/" target="_blank" rel="noopener noreferrer">
+            <Image src={Logo} alt="Logo" className="mt-2 h-10 w-50 object-contain" />
+          </a>
           {/* <AppSidebar /> */}
           <main className="mr-50 grow">{props.children}</main>
           <Toast />
