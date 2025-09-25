@@ -48,7 +48,7 @@ export function Layout(props: LayoutProps) {
       <div className="relative flex flex-col sm:min-h-screen">
         <div className="flex flex-row">
           <a href="https://www.hyperagi.ai/" target="_blank" rel="noopener noreferrer">
-            <Image src={Logo} alt="Logo" className="mt-2 h-10 w-50 object-contain" />
+            <Image src={Logo} alt="Logo" className="mt-2 h-10 w-50 object-cover" />
           </a>
           {/* <AppSidebar /> */}
           <main className="mr-50 grow">{props.children}</main>

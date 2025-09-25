@@ -66,14 +66,14 @@ export const orbitTestnets: { [key in number]: OrbitChainConfig } = {
       color: '#3ABE7B',
       network: {
         name: 'HyperAGI',
-        logo: '/images/HyperAGILogo.svg',
+        logo: '/images/logo.png',
         description: 'HyperAGI.'
       },
       nativeTokenData: {
         name: 'HyperAGI Token',
         symbol: 'HYPT',
         decimals: 18,
-        logoUrl: '/images/HyperAGILogo.svg'
+        logoUrl: '/images/logo.png'
       }
     }
   }
