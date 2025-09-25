@@ -72,18 +72,5 @@ export function chainIdToInfuraKey(chainId: ChainId) {
 }
 
 export function chainIdToInfuraUrl(chainId: ChainId) {
-  const infuraKey = chainIdToInfuraKey(chainId)
-
-  switch (chainId) {
-    case ChainId.Ethereum:
-      return `https://mainnet.infura.io/v3/${infuraKey}`
-    case ChainId.Sepolia:
-      return `https://sepolia.infura.io/v3/${infuraKey}`
-    case ChainId.ArbitrumOne:
-      return `https://arb-mainnet.g.alchemy.com/v2/MLJ_aZnJox0bchkTTAAHk`
-    case ChainId.ArbitrumSepolia:
-      return `https://arbitrum-sepolia.infura.io/v3/${infuraKey}`
-    default:
-      return undefined
-  }
+  return `https://arb-mainnet.g.alchemy.com/v2/MLJ_aZnJox0bchkTTAAHk`
 }
