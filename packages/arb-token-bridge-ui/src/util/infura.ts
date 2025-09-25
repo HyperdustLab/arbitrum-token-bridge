@@ -60,7 +60,7 @@ export function chainIdToInfuraKey(chainId: ChainId) {
     case ChainId.Sepolia:
       return process.env.NEXT_PUBLIC_INFURA_KEY_SEPOLIA || defaultInfuraKey
     case ChainId.ArbitrumOne:
-      return '12e8fa5c88d442a588c53cf48eabf7fe'
+      return 'MLJ_aZnJox0bchkTTAAHk'
     case ChainId.ArbitrumSepolia:
       return (
         process.env.NEXT_PUBLIC_INFURA_KEY_ARBITRUM_SEPOLIA || defaultInfuraKey
@@ -72,5 +72,20 @@ export function chainIdToInfuraKey(chainId: ChainId) {
 }
 
 export function chainIdToInfuraUrl(chainId: ChainId) {
-  return `https://arb-mainnet.g.alchemy.com/v2/MLJ_aZnJox0bchkTTAAHk`
+  switch (chainId) {
+    case ChainId.Ethereum:
+      return `https://mainnet.infura.io/v3/${chainIdToInfuraKey(chainId)}`
+    case ChainId.Sepolia:
+      return `https://sepolia.infura.io/v3/${chainIdToInfuraKey(chainId)}`
+    case ChainId.ArbitrumOne:
+      return `https://arbitrum-mainnet.infura.io/v3/${chainIdToInfuraKey(
+        chainId
+      )}`
+    case ChainId.ArbitrumSepolia:
+      return `https://arbitrum-sepolia.infura.io/v3/${chainIdToInfuraKey(
+        chainId
+      )}`
+    default:
+      return `https://mainnet.infura.io/v3/${chainIdToInfuraKey(chainId)}`
+  }
 }

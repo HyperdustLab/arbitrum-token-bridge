@@ -30,7 +30,14 @@ module.exports = {
       {
         source: '/:slug',
         destination: '/?destinationChain=:slug',
-        permanent: true
+        permanent: true,
+        has: [
+          {
+            type: 'header',
+            key: 'accept',
+            value: 'text/html'
+          }
+        ]
       }
     ]
   }
