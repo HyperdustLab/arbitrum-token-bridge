@@ -82,7 +82,7 @@ export function chainIdToInfuraUrl(chainId: ChainId) {
         chainId
       )}`
     case ChainId.ArbitrumSepolia:
-      return `https://arbitrum-sepolia.infura.io/v3/${chainIdToInfuraKey(
+      return `https://arb-mainnet.g.alchemy.com/v2/${chainIdToInfuraKey(
         chainId
       )}`
     default:
