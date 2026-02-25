@@ -98,11 +98,15 @@ export default async function handler(
     return
   }
 
-  const isOnBlockList = await has(address)
-
-  if (isOnBlockList) {
-    res.status(200).send({ blocked: true })
-    return
+  // 仅当配置了 EDGE_CONFIG 连接字符串时使用 Vercel Edge Config 的 block list
+  // Docker/本地等环境未配置时可跳过，避免 "No connection string provided" 错误
+  const edgeConfigConnection = process.env.EDGE_CONFIG
+  if (edgeConfigConnection && edgeConfigConnection.trim() !== '') {
+    const isOnBlockList = await has(address)
+    if (isOnBlockList) {
+      res.status(200).send({ blocked: true })
+      return
+    }
   }
 
   const requestData = [

@@ -60,7 +60,7 @@ export function chainIdToInfuraKey(chainId: ChainId) {
     case ChainId.Sepolia:
       return process.env.NEXT_PUBLIC_INFURA_KEY_SEPOLIA || defaultInfuraKey
     case ChainId.ArbitrumOne:
-      return 'MLJ_aZnJox0bchkTTAAHk'
+      return '8Ia31q08r5SELcMy3EYU8ZUrDHh_iuoF'
     case ChainId.ArbitrumSepolia:
       return (
         process.env.NEXT_PUBLIC_INFURA_KEY_ARBITRUM_SEPOLIA || defaultInfuraKey

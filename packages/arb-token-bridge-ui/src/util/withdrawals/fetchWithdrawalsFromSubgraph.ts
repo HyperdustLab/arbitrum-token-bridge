@@ -71,8 +71,9 @@ export async function fetchWithdrawalsFromSubgraph({
     })
   )
 
+  // 无 L2 subgraph 的链（如 HyperAGI/Orbit L3）直接返回空，避免抛错
   if (!hasL2Subgraph(Number(l2ChainId))) {
-    throw new Error(`L2 subgraph not available for network: ${l2ChainId}`)
+    return []
   }
 
   if (pageSize === 0) return [] // don't query subgraph if nothing requested

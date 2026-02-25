@@ -73,8 +73,9 @@ export const fetchEthTeleportsFromSubgraph = async ({
     })
   )
 
+  // 无 L1 subgraph 的链直接返回空，避免抛错
   if (!hasL1Subgraph(Number(l2ChainId))) {
-    throw new Error(`L1 subgraph not available for network: ${l2ChainId}`)
+    return []
   }
 
   if (pageSize === 0) return [] // don't query subgraph if nothing requested

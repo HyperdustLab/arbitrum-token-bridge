@@ -400,6 +400,12 @@ export async function getUpdatedWithdrawal(
   const parentChainProvider = getProviderForChainId(tx.parentChainId)
   const childChainProvider = getProviderForChainId(tx.childChainId)
   const txReceipt = await getTxReceipt(tx)
+
+  // L3 等链可能返回 null 或 receipt 结构不同，避免传 null 导致抛错或解析不到事件
+  if (!txReceipt) {
+    return tx
+  }
+
   const childTxReceipt = new ChildTransactionReceipt(txReceipt)
   const [withdrawalEvent] = await childTxReceipt.getChildToParentEvents()
 
