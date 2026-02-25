@@ -112,14 +112,28 @@ export async function getOutgoingMessageState(
     localStorage.getItem('arbitrum:bridge:executed-messages') || '{}'
   )
   if (executedMessagesCache[cacheKey]) {
+    console.info(
+      `[WithdrawalStatus] getOutgoingMessageState | l2ChainId=${l2ChainID} | 命中缓存 EXECUTED，未请求链上`
+    )
     return OutgoingMessageState.EXECUTED
   }
 
   const messageReader = new ChildToParentMessageReader(l1Provider, event)
 
   try {
-    return await messageReader.status(l2Provider)
+    const status = await messageReader.status(l2Provider)
+    console.info(
+      `[WithdrawalStatus] getOutgoingMessageState | l2ChainId=${l2ChainID} | messageReader.status() 成功 | 实际结果: ${status} (0=UNCONFIRMED 1=CONFIRMED 2=EXECUTED)`
+    )
+    return status
   } catch (error) {
+    console.warn(
+      `[WithdrawalStatus] getOutgoingMessageState | l2ChainId=${l2ChainID} | messageReader.status() 抛错，回退为 UNCONFIRMED | 错误:`,
+      error
+    )
+    console.info(
+      `[WithdrawalStatus] getOutgoingMessageState 预期: 成功返回 1(CONFIRMED)；抛错常见于 L3→L2 时 SDK 与链上合约/格式不兼容`
+    )
     return OutgoingMessageState.UNCONFIRMED
   }
 }

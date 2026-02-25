@@ -154,6 +154,18 @@ async function getWithdrawalStatusFromEvents({
     childChainId
   )
 
+  const stateLabel =
+    outgoingMessageState === 0
+      ? 'UNCONFIRMED(0)'
+      : outgoingMessageState === 1
+        ? 'CONFIRMED(1)'
+        : outgoingMessageState === 2
+          ? 'EXECUTED(2)'
+          : `unknown(${outgoingMessageState})`
+  console.info(
+    `[WithdrawalStatus] getOutgoingMessageState 返回 | childChain=${childChainId} | 实际结果: ${stateLabel} | 预期: 1=CONFIRMED 才可 Claim`
+  )
+
   switch (outgoingMessageState) {
     case 0:
       return WithdrawalStatus.UNCONFIRMED
@@ -390,6 +402,8 @@ export async function getUpdatedTokenDeposit(
   }
 }
 
+const WITHDRAWAL_STATUS_LOG_PREFIX = '[WithdrawalStatus]'
+
 export async function getUpdatedWithdrawal(
   tx: MergedTransaction
 ): Promise<MergedTransaction> {
@@ -397,17 +411,34 @@ export async function getUpdatedWithdrawal(
     return tx
   }
 
+  const logCtx = `txId=${tx.txId?.slice(0, 10)}… childChain=${tx.childChainId} parentChain=${tx.parentChainId}`
+
   const parentChainProvider = getProviderForChainId(tx.parentChainId)
   const childChainProvider = getProviderForChainId(tx.childChainId)
-  const txReceipt = await getTxReceipt(tx)
 
-  // L3 等链可能返回 null 或 receipt 结构不同，避免传 null 导致抛错或解析不到事件
+  // 步骤 1：拉取子链（L3）交易 receipt
+  const txReceipt = await getTxReceipt(tx)
+  console.info(
+    `${WITHDRAWAL_STATUS_LOG_PREFIX} 步骤1 拉取子链 receipt | ${logCtx} | 实际结果: ${txReceipt ? `有 receipt (block ${txReceipt.blockNumber})` : 'null'}`
+  )
+  console.info(
+    `${WITHDRAWAL_STATUS_LOG_PREFIX} 步骤1 预期: 应有 receipt，若为 null 会一直 pending`
+  )
+
   if (!txReceipt) {
     return tx
   }
 
   const childTxReceipt = new ChildTransactionReceipt(txReceipt)
   const [withdrawalEvent] = await childTxReceipt.getChildToParentEvents()
+
+  // 步骤 2：从 receipt 解析 ChildToParent 事件（L3→L2 提款事件）
+  console.info(
+    `${WITHDRAWAL_STATUS_LOG_PREFIX} 步骤2 解析 ChildToParent 事件 | ${logCtx} | 实际结果: ${withdrawalEvent ? '有事件' : '无事件(空数组)'}`
+  )
+  console.info(
+    `${WITHDRAWAL_STATUS_LOG_PREFIX} 步骤2 预期: 应有 1 个事件，无事件会一直 pending（常见于 L3 receipt 格式与 SDK 不兼容）`
+  )
 
   if (childTxReceipt) {
     const newStatus = withdrawalEvent
@@ -419,12 +450,22 @@ export async function getUpdatedWithdrawal(
         })
       : undefined
 
-    // unique id for withdrawal event is required for claiming, if the new status changes to confirmed
+    // 步骤 3：在父链（L2）上查询消息状态 → 得到 UNCONFIRMED/CONFIRMED/EXECUTED
+    console.info(
+      `${WITHDRAWAL_STATUS_LOG_PREFIX} 步骤3 父链消息状态 | ${logCtx} | 实际结果: newStatus=${newStatus ?? 'undefined'}`
+    )
+    console.info(
+      `${WITHDRAWAL_STATUS_LOG_PREFIX} 步骤3 预期: Confirmed 时会出现 Claim 按钮，UNCONFIRMED 会继续显示等待`
+    )
+
     const uniqueId = withdrawalEvent
       ? getUniqueIdOrHashFromEvent(withdrawalEvent)
       : null
 
     if (typeof newStatus !== 'undefined') {
+      console.info(
+        `${WITHDRAWAL_STATUS_LOG_PREFIX} 步骤4 更新状态 | ${logCtx} | 已更新为 status=${newStatus}`
+      )
       return {
         ...tx,
         uniqueId,
@@ -433,6 +474,9 @@ export async function getUpdatedWithdrawal(
     }
   }
 
+  console.info(
+    `${WITHDRAWAL_STATUS_LOG_PREFIX} 步骤4 未更新 | ${logCtx} | 仍为 pending，下次轮询再试`
+  )
   return tx
 }
 
