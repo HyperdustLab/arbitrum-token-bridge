@@ -480,6 +480,107 @@ export async function getUpdatedWithdrawal(
   return tx
 }
 
+export type WithdrawalPendingReason = {
+  step: number
+  message: string
+  detail: string
+}
+
+/**
+ * 检测提款为何仍处于 pending：执行与 getUpdatedWithdrawal 相同的步骤，
+ * 若仍会保持 pending 则返回原因（步骤 + 说明），便于 UI 展示。
+ */
+export async function getWithdrawalPendingDiagnostic(
+  tx: MergedTransaction
+): Promise<{
+  updatedTx: MergedTransaction
+  pendingReason: WithdrawalPendingReason | null
+}> {
+  if (!isTxPending(tx) || !tx.isWithdrawal || tx.isCctp) {
+    return { updatedTx: tx, pendingReason: null }
+  }
+
+  const parentChainProvider = getProviderForChainId(tx.parentChainId)
+  const childChainProvider = getProviderForChainId(tx.childChainId)
+
+  const txReceipt = await getTxReceipt(tx)
+  if (!txReceipt) {
+    return {
+      updatedTx: tx,
+      pendingReason: {
+        step: 1,
+        message: '未获取到子链交易 receipt',
+        detail:
+          '子链 RPC 未返回该笔交易的 receipt（可能 RPC 异常、交易哈希错误或网络不一致）。请确认钱包/应用连接的是正确的子链（L3）。'
+      }
+    }
+  }
+
+  const childTxReceipt = new ChildTransactionReceipt(txReceipt!)
+  const [withdrawalEvent] = await childTxReceipt.getChildToParentEvents()
+
+  if (!withdrawalEvent) {
+    return {
+      updatedTx: tx,
+      pendingReason: {
+        step: 2,
+        message: '未解析到 ChildToParent 提款事件',
+        detail:
+          '从子链 receipt 中未解析出 Arbitrum 的 ChildToParent 事件，常见于 L3（Orbit）链的 receipt 格式与当前 SDK 不兼容。'
+      }
+    }
+  }
+
+  let newStatus: string | undefined
+  try {
+    newStatus = await getWithdrawalStatusFromEvents({
+      withdrawalEvent,
+      childChainId: tx.childChainId,
+      parentChainProvider,
+      childChainProvider
+    })
+  } catch (e) {
+    return {
+      updatedTx: tx,
+      pendingReason: {
+        step: 3,
+        message: '查询父链消息状态时出错',
+        detail: `父链（L2）上查询该笔提款状态时抛错，可能与 L3→L2 的合约/格式不兼容。错误: ${(e as Error)?.message ?? String(e)}`
+      }
+    }
+  }
+
+  if (typeof newStatus === 'undefined') {
+    return {
+      updatedTx: tx,
+      pendingReason: {
+        step: 3,
+        message: '父链消息状态未知',
+        detail:
+          '在父链上未得到明确状态（非 UNCONFIRMED/CONFIRMED/EXECUTED），无法更新 UI。'
+      }
+    }
+  }
+
+  if (newStatus === WithdrawalStatus.UNCONFIRMED) {
+    return {
+      updatedTx: tx,
+      pendingReason: {
+        step: 3,
+        message: '父链消息仍为「未确认」',
+        detail:
+          '提款在父链上仍处于挑战期内（约 2 小时），需等待确认后才可出现 Claim 按钮。若已超过 2 小时仍为此状态，可能是父链节点未同步或查询接口异常。'
+      }
+    }
+  }
+
+  const uniqueId = getUniqueIdOrHashFromEvent(withdrawalEvent)
+  return {
+    updatedTx: { ...tx, uniqueId, status: newStatus },
+    pendingReason: null
+  }
+}
+
 export async function getUpdatedCctpTransfer(
   tx: MergedTransaction
 ): Promise<MergedTransaction> {

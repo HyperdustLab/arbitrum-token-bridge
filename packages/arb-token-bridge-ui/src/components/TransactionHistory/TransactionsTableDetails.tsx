@@ -1,6 +1,6 @@
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ArrowRightIcon } from '@heroicons/react/24/solid'
-import { Fragment, PropsWithChildren, useMemo } from 'react'
+import { Fragment, PropsWithChildren, useCallback, useMemo, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import Image from 'next/image'
 import dayjs from 'dayjs'
@@ -19,9 +19,14 @@ import { Button } from '../common/Button'
 import { GET_HELP_LINK, ether } from '../../constants'
 import { useTransactionHistory } from '../../hooks/useTransactionHistory'
 import { shortenAddress } from '../../util/CommonUtils'
-import { isTxCompleted } from './helpers'
+import {
+  getWithdrawalPendingDiagnostic,
+  isTxCompleted,
+  isTxPending
+} from './helpers'
 import { Address } from '../../util/AddressUtils'
 import { sanitizeTokenSymbol } from '../../util/TokenUtils'
+import { warningToast } from '../common/atoms/Toast'
 
 const DetailsBox = ({
   children,
@@ -44,7 +49,10 @@ export const TransactionsTableDetails = ({
 }) => {
   const { tx: txFromStore, isOpen, close, reset } = useTxDetailsStore()
   const { ethToUSD } = useETHPrice()
-  const { transactions } = useTransactionHistory(address)
+  const { transactions, updatePendingTransaction } = useTransactionHistory(
+    address
+  )
+  const [isCheckingPending, setIsCheckingPending] = useState(false)
 
   const tx = useMemo(() => {
     if (!txFromStore) {
@@ -81,6 +89,35 @@ export const TransactionsTableDetails = ({
 
   const sourceNetworkName = getNetworkName(sourceChainId)
   const destinationNetworkName = getNetworkName(destinationChainId)
+
+  const handleCheckPendingReason = useCallback(async () => {
+    if (!tx || !tx.isWithdrawal || !isTxPending(tx)) return
+    setIsCheckingPending(true)
+    try {
+      const { updatedTx, pendingReason } = await getWithdrawalPendingDiagnostic(
+        tx
+      )
+      await updatePendingTransaction(updatedTx)
+      if (pendingReason) {
+        const text = `步骤 ${pendingReason.step}: ${pendingReason.message}\n\n${pendingReason.detail}`
+        warningToast(text, { autoClose: 12000 })
+      } else if (isTxPending(updatedTx)) {
+        warningToast('检测完成，当前仍为 pending，未能定位到具体步骤原因。', {
+          autoClose: 8000
+        })
+      }
+    } catch (e) {
+      warningToast(
+        `检测失败: ${(e as Error)?.message ?? String(e)}`,
+        { autoClose: 8000 }
+      )
+    } finally {
+      setIsCheckingPending(false)
+    }
+  }, [tx, updatePendingTransaction])
+
+  const showPendingCheckButton =
+    tx.isWithdrawal && isTxPending(tx) && !isTxCompleted(tx)
 
   return (
     <Transition show={isOpen} as={Fragment}>
@@ -236,7 +273,19 @@ export const TransactionsTableDetails = ({
                 </DetailsBox>
 
                 {!isTxCompleted(tx) && (
-                  <div className="flex justify-end">
+                  <div className="flex flex-wrap items-center justify-end gap-2">
+                    {showPendingCheckButton && (
+                      <Button
+                        variant="secondary"
+                        className="border-white/30 text-xs"
+                        disabled={isCheckingPending}
+                        onClick={handleCheckPendingReason}
+                      >
+                        {isCheckingPending
+                          ? '检测中…'
+                          : '检测 pending 原因'}
+                      </Button>
+                    )}
                     <ExternalLink href={GET_HELP_LINK}>
                       <Button
                         variant="secondary"
